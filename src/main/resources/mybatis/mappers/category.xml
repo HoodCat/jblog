@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="category">
+    <insert id="insert" parameterType="categoryvo">
+    <![CDATA[
+        insert into category
+        values(null, #{name}, #{description}, now(), #{blogNo})
+    ]]>
+    </insert>
+    
+    <select id="getCategoryList" parameterType="long" resultType="map">
+    <![CDATA[
+        select category.no as no, name, description, count(post.no) as cntPost
+        from blog
+        left join category on blog.no = category.blog_no
+        left join post on category.no = post.category_no
+        where blog.no = #{no}
+        group by category.no, name, description;
+    ]]>
+    </select>
+    
+    <delete id="delete" parameterType="categoryvo">
+    <![CDATA[
+        delete from category
+        where no=#{no}
+    ]]>
+    </delete>
+</mapper>

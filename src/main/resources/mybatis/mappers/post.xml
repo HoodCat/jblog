@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="post">
+    <insert id="insert" parameterType="postVo">
+        <![CDATA[
+            insert into post
+            values(null, #{title}, #{content},  now(), #{categoryNo})
+        ]]>
+    </insert>
+    
+    <select id="getPostByCategoryNo" parameterType="long" resultType="postvo">
+        <![CDATA[
+            select no, title, content, reg_date as regDate, category_no as categoryNo
+            from post
+        ]]>
+        <if test="_parameter lt 0">
+        <![CDATA[
+            where category_no is null            
+        ]]>
+        </if>
+        <if test="_parameter gt 0">
+        <![CDATA[
+            where category_no = #{_parameter}            
+        ]]>
+        </if>
+        <![CDATA[
+            order by reg_date desc
+        ]]>
+    </select>
+    
+    <select id="getPostByNo" parameterType="long" resultType="postVo">
+        <![CDATA[
+            select no, title, content, reg_date as regDate, category_no as categoryNo
+            from post
+            ]]>
+        <if test="_parameter gt 0">
+            <![CDATA[    
+                where no=#{_parameter}
+            ]]>
+        </if>
+        <![CDATA[
+            order by reg_date desc
+            limit 0, 1;
+        ]]>
+    </select>
+    
+    <select id="getPost" parameterType="postvo" resultType="postVo">
+        <![CDATA[
+            select no, title, content, reg_date as regDate, category_no as categoryNo
+            from post
+        ]]>
+        <choose>
+            <when test="no gt 0">
+            <![CDATA[    
+                where no=#{no}
+            ]]>
+            <if test="categoryNo lt 0">
+                <![CDATA[
+                    and category_no is null            
+                ]]>
+            </if>
+            <if test="categoryNo gt 0">
+                <![CDATA[
+                    and category_no = #{categoryNo}            
+                ]]>
+            </if>     
+            </when>
+            <otherwise>
+            <if test="categoryNo lt 0">
+                <![CDATA[
+                    where category_no is null            
+                ]]>
+            </if>
+            <if test="categoryNo gt 0">
+                <![CDATA[
+                    where category_no = #{categoryNo}            
+                ]]>
+            </if>   
+            </otherwise>
+        </choose>
+        <![CDATA[
+            order by reg_date desc
+            limit 0, 1;
+        ]]>
+    </select>
+    
+</mapper>

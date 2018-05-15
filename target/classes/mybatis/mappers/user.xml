@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="user">
+    <insert id="insert" parameterType="uservo">
+        <![CDATA[
+            insert into `user`
+            values(null, #{name}, #{id}, password(#{password}), now())
+        ]]>
+        <selectKey resultType="long" keyProperty="no" order="AFTER">
+            <!-- 최근에 입력한 값을 받아온다. -->
+            <![CDATA[
+            select last_insert_id()
+            ]]>
+        </selectKey>
+    </insert>
+
+    <select id="getUserByIdAndPassword" parameterType="map"
+        resultType="uservo">
+        <![CDATA[
+            select no, id, name
+            from `user`
+            where id=#{id} and password=password(#{password})
+        ]]>
+    </select>
+</mapper>
